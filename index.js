@@ -5,7 +5,6 @@ const redirect_url = 'https://developers.google.com/oauthplayground'
 const refresh_token = '1//04kKRlLIVtK4hCgYIARAAGAQSNwF-L9IrmzEgJyIVzlMOD9Lko2qpRlNiT-rGTAdoWmZsgUXiYPbvOMGrCWXvjZO4VjIv1DfCLq4'
 const express = require('express')
 const app = express()
-const port = 3000
 const oauth2client = new google.auth.OAuth2(
     CLIENT_ID,
     CLIENT_secret,
@@ -40,15 +39,12 @@ async function generatePublicURl(fileID){
 }
 
 async function readFiles(folderId){
-    folderId = '1I2eCVi3QHyEm8ba2CyNiCJCv4itWW0XM'
+   
     try{
         const result = await drive.files.list({
             q: `'${folderId}' in parents`
         })
-        result.data.files.forEach(e => {
-            console.log(e)
-            generatePublicURl(e.id)
-        });
+        return result.data.files
         
     }
     catch(error){
@@ -56,11 +52,16 @@ async function readFiles(folderId){
     }
 }
 
-readFiles();
+
 app.get('/', (req, res) => {
     res.send('Hello World!')
   })
-  
-  app.listen(process.env.PORT || 5000, () => {
-    console.log(`Example app listening on port ${port}`)
+app.get('/api_links/:folderId', (req, res) => {
+    readFiles(req.params.folderId).then( function(result){
+        res.send(result)
+    })
+   
+  })
+  app.listen(process.env.PORT || 8080, () => {
+    console.log(`Example app listening on port 8080`)
   })
