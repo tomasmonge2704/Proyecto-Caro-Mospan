@@ -4,6 +4,7 @@ const CLIENT_secret = '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'
 const redirect_url = 'https://developers.google.com/oauthplayground'
 const refresh_token = '1//04kKRlLIVtK4hCgYIARAAGAQSNwF-L9IrmzEgJyIVzlMOD9Lko2qpRlNiT-rGTAdoWmZsgUXiYPbvOMGrCWXvjZO4VjIv1DfCLq4'
 const express = require('express')
+const cors = require('cors')
 const app = express()
 const oauth2client = new google.auth.OAuth2(
     CLIENT_ID,
@@ -52,7 +53,7 @@ async function readFiles(folderId){
     }
 }
 
-
+app.use(cors());
 app.get('/', (req, res) => {
     res.send('Hello World!')
   })
