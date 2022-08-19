@@ -44,6 +44,7 @@ async function readFiles(folderId){
             q: `'${folderId}' in parents`
         })
         result.data.files.forEach(e => {
+            console.log(e)
             generatePublicURl(e.id)
         });
         
