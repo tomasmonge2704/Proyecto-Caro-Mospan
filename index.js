@@ -32,13 +32,22 @@ async function generatePublicURl(fileID){
             fileId: fileID,
             fields:'webViewLink, webContentLink'
         })
-        console.log(result.data.webViewLink)
+        return result.data.webViewLink
     }
     catch(error){
         console.log(error)
     }
 }
+async function combinarDatos(array){
+ var newArray = array.map(async e => {
+    e.links = await generatePublicURl(e.id)  
+    return e
+})
 
+return Promise.all(newArray).then(function(results){
+    return results
+})
+}
 async function readFiles(folderId){
    
     try{
@@ -58,8 +67,10 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
   })
 app.get('/api_links/:folderId', (req, res) => {
-    readFiles(req.params.folderId).then( function(result){
-        res.send(result)
+    readFiles(req.params.folderId).then(function(result){
+        combinarDatos(result).then(function(result){
+            res.send(result)
+        })
     })
    
   })
