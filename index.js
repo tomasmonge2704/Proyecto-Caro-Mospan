@@ -104,13 +104,18 @@ app.get('/api_links/:folderId', (req, res) => {
 app.post('/login', (req, res) => {
     login(req.body.username, req.body.password).then(function (result) {
         if (result == true) {
-            readFiles(req.body.folderId).then(function (result) {
-                combinarDatos(result).then(function (result) {
-                    res.send(result)
-                })
-            }), function (reason) {
-                console.log(reason)
+            if(req.body.folderId){
+                readFiles(req.body.folderId).then(function (result) {
+                    combinarDatos(result).then(function (result) {
+                        res.send(result)
+                    })
+                }), function (reason) {
+                    console.log(reason)
+                }
+            }else{
+                res.send("login exitoso")
             }
+            
         }else{
             res.send('login failed')
         }
