@@ -7,6 +7,11 @@ import {login,crearUsuario} from './mongoLogin.js';
 import os from 'os'
 import cluster from 'cluster'
 import config from './config.js';
+import exphbs from 'express-handlebars'
+import path from 'path';
+import {fileURLToPath} from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const numCPUs = os.cpus().length;
 const CLIENT_ID = '475388183627-8s0qiu7nglrpv5qkg877njn8jar4gpqa.apps.googleusercontent.com'
 const CLIENT_secret = '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'
@@ -15,6 +20,15 @@ const refresh_token = '1//044c-Lh--8J1pCgYIARAAGAQSNwF-L9IrBuZTwWkUTaUi3VFkSOfte
 const app = express()
 const { Server: HttpServer } = require('http')
 const httpServer = new HttpServer(app)
+app.use(express.static('views'))
+app.engine("hbs", exphbs.engine({
+    extname: ".hbs",
+    defaultLayout: null,
+    layoutsDir: __dirname + "/views",
+    partialsDir: __dirname + "/views"
+}))
+app.set("views", "./views");
+app.set("view engine", "hbs");
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 const oauth2client = new google.auth.OAuth2(
@@ -75,7 +89,10 @@ async function readFiles(folderId) {
 
 app.use(cors());
 app.get('/', (req, res) => {
-    res.send('Hello World!')
+    res.render('login')
+})
+app.get('/registrarse', (req, res) => {
+    res.render('signup')
 })
 app.get('/api_links/:folderId', (req, res) => {
     readFiles(req.params.folderId).then(function (result) {
@@ -101,7 +118,7 @@ app.post('/login', (req, res) => {
 
 })
 app.post('/register', (req, res) => {
-    crearUsuario(req.body.username,req.body.password).then( function (result) {
+    crearUsuario(req.body.username,req.body.password,req.body.token).then( function (result) {
         res.send(result)
     })
 })

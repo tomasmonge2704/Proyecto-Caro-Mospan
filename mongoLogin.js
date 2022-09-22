@@ -25,16 +25,20 @@ async function encontrarUsuario(username) {
     return res
 }
 //crea el usuario
-async function crearUsuario(username, password) {
+async function crearUsuario(username, password, token) {
     await conectDB()
     const encontrado = await encontrarUsuario(username)
-    if (encontrado.username == username) {
+    if (encontrado !== null) {
         return 'este username ya existe'
     } else {
-        User.create({
-            username: username,
-            password: createHash(password)});
-        return 'usuario creado'
+        if (token == "1roZJIVtj5JnG5HH"){
+            User.create({
+                username: username,
+                password: createHash(password)});
+            return 'usuario creado'
+        }else{
+            return 'token incorrecto'
+        }
     }
 }
 //valida el usuario
