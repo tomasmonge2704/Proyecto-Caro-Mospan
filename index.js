@@ -1,12 +1,20 @@
+import { createRequire } from "module"; // Bring in the ability to create the 'require' method
+const require = createRequire(import.meta.url); // construct the require method
 import { google } from 'googleapis';
 import express from 'express'
 import cors from 'cors'
 import {login,crearUsuario} from './mongoLogin.js';
+import os from 'os'
+import cluster from 'cluster'
+import config from './config.js';
+const numCPUs = os.cpus().length;
 const CLIENT_ID = '475388183627-8s0qiu7nglrpv5qkg877njn8jar4gpqa.apps.googleusercontent.com'
 const CLIENT_secret = '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'
 const redirect_url = 'https://developers.google.com/oauthplayground'
 const refresh_token = '1//044c-Lh--8J1pCgYIARAAGAQSNwF-L9IrBuZTwWkUTaUi3VFkSOfteVd72LwF8XMeI7wpVZ6_Cd5cHuZ1uQMaDFw9tfd_A5QBz3w'
 const app = express()
+const { Server: HttpServer } = require('http')
+const httpServer = new HttpServer(app)
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 const oauth2client = new google.auth.OAuth2(
@@ -97,6 +105,20 @@ app.post('/register', (req, res) => {
         res.send(result)
     })
 })
-app.listen(process.env.PORT || 8081, () => {
-    console.log(`Example app listening on port 8081`)
-})
+
+if (cluster.isMaster && config.CLUSTER == "on" ){
+    console.log(`Master ${process.pid} is running`)
+    for (let i = 0; i < numCPUs; i++){
+        cluster.fork();
+    }
+    cluster.on('exit',(worker,code,signal)=>{
+        console.log(`worker ${worker.process.pid} died`)
+        cluster.fork()
+    })
+
+}else{
+    const connectedServer = httpServer.listen(config.PORT, () => {
+        console.log(`Servidor escuchando en el puerto ${config.PORT} - PID WORKER ${process.pid}`)
+    })
+    connectedServer.on('error', error => console.log(`Error en el servidor ${error}`))
+}
