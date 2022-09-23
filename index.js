@@ -91,7 +91,7 @@ app.use(cors());
 app.get('/', (req, res) => {
     res.render('login')
 })
-app.get('/registrarse', (req, res) => {
+app.get('/register', (req, res) => {
     res.render('signup')
 })
 app.get('/api_links/:folderId', (req, res) => {
