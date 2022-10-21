@@ -3,7 +3,7 @@ const require = createRequire(import.meta.url); // construct the require method
 import { google } from 'googleapis';
 import express from 'express'
 import cors from 'cors'
-import {login,crearUsuario} from './mongoLogin.js';
+import {login,crearUsuario, listarAll,deleteUser,updateUser} from './mongoLogin.js';
 import os from 'os'
 import cluster from 'cluster'
 import config from './config.js';
@@ -16,7 +16,7 @@ const numCPUs = os.cpus().length;
 const CLIENT_ID = '475388183627-8s0qiu7nglrpv5qkg877njn8jar4gpqa.apps.googleusercontent.com'
 const CLIENT_secret = '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'
 const redirect_url = 'https://developers.google.com/oauthplayground'
-const refresh_token = '1//04N_rzEvUrk2dCgYIARAAGAQSNwF-L9Irobynr4bS3Fdg1mcfPibX65AckMezgJDlxYBBJZAckEQqHclDkTWvOJXiDYf8SsGv_3o'
+const refresh_token = '1//04YpzE7m8NHQTCgYIARAAGAQSNwF-L9IrlsW-ykxRwNxQ95uIlQ9FDju-sTxU8llfrolN2CTcgpb9dK2do6g2UcSTVzSl74HXuyI'
 const app = express()
 const { Server: HttpServer } = require('http')
 const httpServer = new HttpServer(app)
@@ -122,6 +122,39 @@ app.post('/login', (req, res) => {
     });
 
 })
+app.post('/login2', (req, res) => {
+    login(req.body.username, req.body.password).then(function (result) {
+        if (result == true) {
+            if(req.body.folderId){
+                readFiles(req.body.folderId).then(function (result) {
+                    combinarDatos(result).then(function (result) {
+                        res.send(result)
+                    })
+                }), function (reason) {
+                    console.log(reason)
+                }
+            }else{
+                listarAll().then(function(result){
+                    res.render("home", {result})
+                })
+            }
+            
+        }else{
+            res.render('loginFailed')
+        }
+    });
+
+})
+app.put('/user/:username/:password', (req, res) => {
+updateUser(req.params.username,req.params.password).then( function (result) {
+    res.send(result)
+})
+})
+app.delete('/user/:username', (req, res) => {
+    deleteUser(req.params.username).then( function (result) {
+        res.send(result)
+    })
+    })
 app.post('/register', (req, res) => {
     crearUsuario(req.body.username,req.body.password,req.body.token).then( function (result) {
         res.send(result)

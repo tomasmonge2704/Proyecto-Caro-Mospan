@@ -56,5 +56,30 @@ async function login(username, password) {
             return true;
         }
 }
-
-export { login, crearUsuario }
+async function listarAll (){
+    try {
+          return await User.find({}).lean();
+      } catch (error) {
+        return undefined;
+      }
+}
+async function deleteUser (username){
+    try {
+          return await User.deleteOne({ username: username });
+      } catch (error) {
+        return undefined;
+      }
+}
+async function updateUser (username,password){
+    try {
+        const user = await User.findOne({ username: username }).exec();
+        user.password = createHash(password)
+          return await User.updateOne(
+            { _id: user._id },
+            { $set: user }
+          );
+      } catch (error) {
+        return error;
+      }
+}
+export { login, crearUsuario,listarAll,deleteUser,updateUser }
