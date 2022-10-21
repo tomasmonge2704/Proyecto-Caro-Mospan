@@ -43,7 +43,6 @@
         </button>
       </div>
       <div class="modal-body">
-       
         <div class="form-group">
           <label for="name"><b>Ingrese el username</b></label>
           <input id="username" class="form-control" type="text" name="username">
@@ -52,7 +51,9 @@
           <label for="name"><b>Ingrese la contraseña</b></label>
           <input id="password" class="form-control" type="password" name="password">
         </div>
-        
+        <div class="alert alert-success alert-dismissible fade" id="alert" role="alert">
+  <strong>Usuario Actualizado!</strong>
+</div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -119,6 +120,12 @@ const username = document.getElementById("username").value;
 const password = document.getElementById("password").value;
 axios.put(`/user/${username}/${password}`)
 .then((response) => {
+$( "#alert" ).addClass( "show" );
+setTimeout(
+  function() 
+  {
+$( "#alert" ).removeClass( "show" );
+  }, 3000);
     console.log(response)
 })
 .catch((err)=>{
