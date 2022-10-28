@@ -36,8 +36,7 @@ const oauth2client = new google.auth.OAuth2(
     CLIENT_secret,
     redirect_url
 )
-const {tokens} = await oauth2client.getToken(code)
-oauth2client.setCredentials(tokens);
+oauth2client.setCredentials({ refresh_token: refresh_token })
 
 const drive = google.drive({
     version: 'v3',
