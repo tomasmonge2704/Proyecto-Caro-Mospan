@@ -1,6 +1,6 @@
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
 const require = createRequire(import.meta.url); // construct the require method
-import { google } from 'googleapis';
+import {oauth2client,google} from "./oauth2Client.js";
 import express from 'express'
 import cors from 'cors'
 import {login,crearUsuario, listarAll,deleteUser,updateUser} from './mongoLogin.js';
@@ -13,10 +13,6 @@ import {fileURLToPath} from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const numCPUs = os.cpus().length;
-const CLIENT_ID = '475388183627-8s0qiu7nglrpv5qkg877njn8jar4gpqa.apps.googleusercontent.com'
-const CLIENT_secret = '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'
-const redirect_url = 'https://developers.google.com/oauthplayground'
-const refresh_token = '1//04hVgfd6F4CnUCgYIARAAGAQSNwF-L9IraSQQ5DdfdE1gEJsl2vHrX0RZEhCJXRbpg5iApj2dWt7ZDiPsdwmMvxs7p6vCRyqd33E'
 const app = express()
 const { Server: HttpServer } = require('http')
 const httpServer = new HttpServer(app)
@@ -31,18 +27,11 @@ app.set("views", "./views");
 app.set("view engine", "hbs");
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
-const oauth2client = new google.auth.OAuth2(
-    CLIENT_ID,
-    CLIENT_secret,
-    redirect_url
-)
-oauth2client.setCredentials({ refresh_token: refresh_token })
 
 const drive = google.drive({
     version: 'v3',
     auth: oauth2client
 })
-
 
 async function generatePublicURl(fileID) {
     try {
