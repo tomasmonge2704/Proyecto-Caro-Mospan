@@ -28,11 +28,16 @@ app.get('/register', (req, res) => {
     res.render('signup')
 })
 app.get('/api_links/:folderId', (req, res) => {
-    readFiles(req.params.folderId).then(function (result) {
-        combinarDatos(result).then(function (result) {
-            res.send(result)
-        })
-    })
+        readFiles(req.params.folderId).then(function (result) {
+            if(result == undefined){
+                res.send("error")
+            }
+            else{
+                combinarDatos(result).then(function (result) {
+                    res.send(result)
+                })
+            }
+            })
 })
 app.post('/login', (req, res) => {
     login(req.body.username, req.body.password).then(function (result) {
