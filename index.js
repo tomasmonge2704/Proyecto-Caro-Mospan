@@ -1,21 +1,14 @@
-import { createRequire } from "module"; // Bring in the ability to create the 'require' method
-const require = createRequire(import.meta.url); // construct the require method
-import {oauth2client,google} from "./oauth2Client.js";
 import express from 'express'
 import cors from 'cors'
 import {login,crearUsuario, listarAll,deleteUser,updateUser} from './mongoLogin.js';
-import os from 'os'
-import cluster from 'cluster'
 import config from './config.js';
 import exphbs from 'express-handlebars'
 import path from 'path';
+import { readFiles,combinarDatos} from "./utils.js";
 import {fileURLToPath} from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const numCPUs = os.cpus().length;
 const app = express()
-const { Server: HttpServer } = require('http')
-const httpServer = new HttpServer(app)
 app.use(express.static('views'))
 app.engine("hbs", exphbs.engine({
     extname: ".hbs",
@@ -27,55 +20,6 @@ app.set("views", "./views");
 app.set("view engine", "hbs");
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
-
-const drive = google.drive({
-    version: 'v3',
-    auth: oauth2client
-})
-
-async function generatePublicURl(fileID) {
-    try {
-        await drive.permissions.create({
-            fileId: fileID,
-            requestBody: {
-                role: 'reader',
-                type: 'anyone'
-            }
-        })
-        const result = await drive.files.get({
-            fileId: fileID,
-            fields: 'webViewLink, webContentLink'
-        })
-        return result.data.webViewLink
-    }
-    catch (error) {
-        console.log(error)
-    }
-}
-async function combinarDatos(array) {
-    var newArray = array.map(async e => {
-        e.links = await generatePublicURl(e.id)
-        return e
-    })
-
-    return Promise.all(newArray).then(function (results) {
-        return results
-    })
-}
-async function readFiles(folderId) {
-
-    try {
-        const result = await drive.files.list({
-            q: `'${folderId}' in parents`
-        })
-        return result.data.files
-
-    }
-    catch (error) {
-        console.log(error)
-    }
-}
-
 app.use(cors());
 app.get('/', (req, res) => {
     res.render('login')
@@ -150,19 +94,6 @@ app.post('/register', (req, res) => {
     })
 })
 
-if (cluster.isMaster && config.CLUSTER == "on" ){
-    console.log(`Master ${process.pid} is running`)
-    for (let i = 0; i < numCPUs; i++){
-        cluster.fork();
-    }
-    cluster.on('exit',(worker,code,signal)=>{
-        console.log(`worker ${worker.process.pid} died`)
-        cluster.fork()
-    })
-
-}else{
-    const connectedServer = httpServer.listen(config.PORT, () => {
-        console.log(`Servidor escuchando en el puerto ${config.PORT} - PID WORKER ${process.pid}`)
-    })
-    connectedServer.on('error', error => console.log(`Error en el servidor ${error}`))
-}
+app.listen(config.PORT, () => {
+    console.log(`Server on Port: ${config.PORT}`)
+  })

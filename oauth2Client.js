@@ -11,4 +11,9 @@ const oauth2client = new google.auth.OAuth2(
 )
 oauth2client.setCredentials({ refresh_token:refresh_token})
 
-export {oauth2client,google};
+const drive = google.drive({
+    version: 'v3',
+    auth: oauth2client
+})
+
+export {oauth2client,google,drive};
