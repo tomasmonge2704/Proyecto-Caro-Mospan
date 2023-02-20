@@ -1,19 +1,19 @@
-import { google } from 'googleapis';
-const CLIENT_ID = '475388183627-8s0qiu7nglrpv5qkg877njn8jar4gpqa.apps.googleusercontent.com'
-const CLIENT_secret = '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'
-const redirect_url = 'https://developers.google.com/oauthplayground'
-const refresh_token = '1//04jFefqI_zOC_CgYIARAAGAQSNwF-L9IrMMi8RQbfyuXARNj5_7lkqKmAsOW_itH52bC2ECJUxRlsBc8pyJvgGmbfwKC2ojyk8LY'
+import { google } from "googleapis";
+import { OAuth2Client } from "google-auth-library";
+// Establecer los valores de configuración
+const CLIENT_ID = '475388183627-8s0qiu7nglrpv5qkg877njn8jar4gpqa.apps.googleusercontent.com';
+const CLIENT_SECRET = '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';
+const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
+const REFRESH_TOKEN = '1//04a_bBmAK9ktBCgYIARAAGAQSNwF-L9IrDeaPDt87YeOcqUwPVMXYNTz5xuEpp_QLTk93o6kqGV9jPmYFhpubbzELH5ia2Qpuuic';
 
-const oauth2client = new google.auth.OAuth2(
-    CLIENT_ID,
-    CLIENT_secret,
-    redirect_url
-)
-oauth2client.setCredentials({ refresh_token:refresh_token})
+// Crear un objeto OAuth2Client y establecer el token de actualización
+const oAuth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
+// Crear un objeto de la API de Google Drive
 const drive = google.drive({
-    version: 'v3',
-    auth: oauth2client
-})
+  version: 'v3',
+  auth: oAuth2Client,
+});
 
-export {oauth2client,google,drive};
+export {drive}

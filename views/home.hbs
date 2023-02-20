@@ -68,6 +68,7 @@
       <thead>
         <tr>
           <th scope="col">Username</th>
+          <th scope="col">Password</th>
           <th scope="col">Editar</th>
           <th scope="col">Borrar</th>
         </tr>
@@ -77,6 +78,7 @@
         {{#each result}}
         <tr>
           <td>{{this.username}}</td>
+          <td>{{this.password}}</td>
           <td>
             <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"

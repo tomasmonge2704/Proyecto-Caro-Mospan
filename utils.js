@@ -1,9 +1,4 @@
-import {oauth2client,google} from "./oauth2Client.js";
-
-const drive = google.drive({
-    version: 'v3',
-    auth: oauth2client
-})
+import { drive } from "./oauth2Client.js"
 
 export async function generatePublicURl(fileID) {
     try {
