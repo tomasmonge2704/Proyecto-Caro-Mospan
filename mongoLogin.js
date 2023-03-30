@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import bCrypt from 'bcryptjs'
-const url = 'mongodb+srv://tomas22:1roZJIVtj5JnG5HH@cluster0.cycnd1i.mongodb.net/?retryWrites=true&w=majority'
+const url = process.env.MONGO_URL;
 const User = mongoose.model('Usuarios', new mongoose.Schema({ username: String, password: String }));
 //conectar a la BDD
 const connectionParams = {

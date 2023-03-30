@@ -1,4 +1,5 @@
 import express from 'express'
+import {} from 'dotenv/config'
 import cors from 'cors'
 import {login,crearUsuario, listarAll,deleteUser,updateUser} from './mongoLogin.js';
 import config from './config.js';
