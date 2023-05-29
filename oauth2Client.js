@@ -4,7 +4,7 @@ import { OAuth2Client } from "google-auth-library";
 const CLIENT_ID = '475388183627-8s0qiu7nglrpv5qkg877njn8jar4gpqa.apps.googleusercontent.com';
 const CLIENT_SECRET = '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';
 const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
-const REFRESH_TOKEN = '1//0436FihJzOuBiCgYIARAAGAQSNwF-L9IrIXVM9esrRVx4Bea5xb_W7wakaREDMmYCOa7nd0J4bAO_ykap-bwCi3f2-H56frU_xp8';
+const REFRESH_TOKEN = '1//04ptCfLERPk0OCgYIARAAGAQSNwF-L9IrnQqbhH1E2tMct8UuYzIWfSiwyWmr2--Lj0zNQqXUjU9JebYRXf3VRX3pcLAiuZ7ipOg';
 
 // Crear un objeto OAuth2Client y establecer el token de actualización
 const oAuth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
